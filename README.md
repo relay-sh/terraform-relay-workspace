@@ -7,7 +7,7 @@ through one agent pool and one secret source states that once.
 ```hcl
 module "workspace" {
   source  = "relay-sh/workspace/relay"
-  version = "~> 0.1"
+  version = "~> 0.0.1"
 
   name = "prod"
 
@@ -39,13 +39,13 @@ Upstream TLS is always on. Only its CA can be set.
 | Name | Version |
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7 |
-| <a name="requirement_relay"></a> [relay](#requirement\_relay) | ~> 0.1 |
+| <a name="requirement_relay"></a> [relay](#requirement\_relay) | ~> 0.0.1 |
 
 ## Providers
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_relay"></a> [relay](#provider\_relay) | ~> 0.1 |
+| <a name="provider_relay"></a> [relay](#provider\_relay) | ~> 0.0.1 |
 
 ## Modules
 
