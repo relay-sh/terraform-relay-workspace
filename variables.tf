@@ -13,7 +13,6 @@ variable "connection_defaults" {
   description = "Values applied to every connection that does not set them."
   type = object({
     agent_pool        = optional(string, "default")
-    kind              = optional(string, "interactive")
     credential_source = optional(string, "")
     audit_enabled     = optional(bool, true)
     redact_enabled    = optional(bool, false)
@@ -21,11 +20,6 @@ variable "connection_defaults" {
     host_tls_ca       = optional(string, "")
   })
   default = {}
-
-  validation {
-    condition     = contains(["interactive", "service"], var.connection_defaults.kind)
-    error_message = "connection_defaults.kind must be interactive or service."
-  }
 }
 
 variable "connections" {
@@ -39,7 +33,6 @@ variable "connections" {
     database            = optional(string, "")
     listen              = optional(string, "")
     agent_pool          = optional(string)
-    kind                = optional(string)
     managed_database_id = optional(string)
     audit_enabled       = optional(bool)
     redact_enabled      = optional(bool)
@@ -54,11 +47,6 @@ variable "connections" {
     host_tls_ca = optional(string)
   }))
   default = {}
-
-  validation {
-    condition     = alltrue([for c in values(var.connections) : c.kind == null || contains(["interactive", "service"], coalesce(c.kind, "interactive"))])
-    error_message = "Each connection kind must be interactive or service."
-  }
 }
 
 variable "connection_passwords" {

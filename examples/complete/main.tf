@@ -34,7 +34,6 @@ module "workspace" {
       host              = "legacy.internal:3306"
       user              = "report"
       credential_source = ""
-      kind              = "service"
       redact_enabled    = false
     }
   }
