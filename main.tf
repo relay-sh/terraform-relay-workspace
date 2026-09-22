@@ -17,7 +17,6 @@ resource "relay_connection" "this" {
   database            = each.value.database
   listen              = each.value.listen
   agent_pool          = coalesce(each.value.agent_pool, var.connection_defaults.agent_pool)
-  kind                = coalesce(each.value.kind, var.connection_defaults.kind)
   managed_database_id = each.value.managed_database_id
   audit_enabled       = coalesce(each.value.audit_enabled, var.connection_defaults.audit_enabled)
   redact_enabled      = coalesce(each.value.redact_enabled, var.connection_defaults.redact_enabled)

@@ -29,7 +29,6 @@ variables {
       engine            = "mongodb"
       host              = "events.internal:27017"
       agent_pool        = "pool-b"
-      kind              = "service"
       credential_source = ""
       audit_enabled     = false
     }
@@ -55,11 +54,6 @@ run "connections_inherit_defaults" {
   assert {
     condition     = relay_connection.this["events"].agent_pool == "pool-b" && relay_connection.this["events"].credential_source == ""
     error_message = "explicit values, including empty strings, override the defaults"
-  }
-
-  assert {
-    condition     = relay_connection.this["events"].kind == "service" && relay_connection.this["orders"].kind == "interactive"
-    error_message = "kind falls back to interactive"
   }
 
   assert {
@@ -94,32 +88,4 @@ run "no_connections" {
     condition     = length(relay_connection.this) == 0 && output.connections == {}
     error_message = "a workspace without connections is valid"
   }
-}
-
-run "rejects_unknown_kind" {
-  command = plan
-
-  variables {
-    connection_defaults = {
-      kind = "batch"
-    }
-  }
-
-  expect_failures = [var.connection_defaults]
-}
-
-run "rejects_unknown_connection_kind" {
-  command = plan
-
-  variables {
-    connections = {
-      bad = {
-        engine = "postgres"
-        host   = "x:5432"
-        kind   = "batch"
-      }
-    }
-  }
-
-  expect_failures = [var.connections]
 }
