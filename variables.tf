@@ -62,3 +62,13 @@ variable "connection_tls_keys" {
   default     = {}
   sensitive   = true
 }
+
+variable "api_keys" {
+  description = "API keys confined to the workspace, keyed by key name."
+  type = map(object({
+    role          = string
+    allowed_cidrs = optional(set(string))
+    expires_in    = optional(string)
+  }))
+  default = {}
+}
