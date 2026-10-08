@@ -1,8 +1,9 @@
 # terraform-relay-workspace
 
-Creates a Relay workspace and its connections. Every connection takes its
-unset fields from `connection_defaults`, so a workspace that routes everything
-through one agent pool and one secret source states that once.
+Creates a Relay workspace with its connections, API keys, IP access list and
+private endpoint services. Every connection takes its unset fields from
+`connection_defaults`, so a workspace that routes everything through one agent
+pool and one secret source states that once.
 
 ```hcl
 module "workspace" {
@@ -34,7 +35,9 @@ Terraform cannot iterate a map that holds sensitive values. Prefer
 Upstream TLS is always on. Only its CA can be set.
 
 `api_keys` creates keys confined to the workspace, keyed by name. Their secrets
-come out of `api_key_secrets` once, at creation.
+come out of `api_key_secrets` once, at creation. A key with `expires_in` is
+replaced by the first apply after it expires, so its secret changes then and
+whatever reads `api_key_secrets` has to pick up the new value.
 
 `ip_access_list` and `private_endpoint_services` set up the workspace's
 network. The module stops at the service: registering a cloud endpoint on it
