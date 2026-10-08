@@ -33,6 +33,9 @@ Terraform cannot iterate a map that holds sensitive values. Prefer
 
 Upstream TLS is always on. Only its CA can be set.
 
+`api_keys` creates keys confined to the workspace, keyed by name. Their secrets
+come out of `api_key_secrets` once, at creation.
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
@@ -55,6 +58,7 @@ No modules.
 
 | Name | Type |
 | ---- | ---- |
+| [relay_api_key.this](https://registry.terraform.io/providers/relay-sh/relay/latest/docs/resources/api_key) | resource |
 | [relay_connection.this](https://registry.terraform.io/providers/relay-sh/relay/latest/docs/resources/connection) | resource |
 | [relay_workspace.this](https://registry.terraform.io/providers/relay-sh/relay/latest/docs/resources/workspace) | resource |
 
@@ -63,6 +67,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_name"></a> [name](#input\_name) | Workspace name, unique in the organization. | `string` | n/a | yes |
+| <a name="input_api_keys"></a> [api\_keys](#input\_api\_keys) | API keys confined to the workspace, keyed by key name. | <pre>map(object({<br/>    role          = string<br/>    allowed_cidrs = optional(set(string))<br/>    expires_in    = optional(string)<br/>  }))</pre> | `{}` | no |
 | <a name="input_connection_defaults"></a> [connection\_defaults](#input\_connection\_defaults) | Values applied to every connection that does not set them. | <pre>object({<br/>    agent_pool        = optional(string, "default")<br/>    credential_source = optional(string, "")<br/>    audit_enabled     = optional(bool, true)<br/>    redact_enabled    = optional(bool, false)<br/>    policy_fail_mode  = optional(string, "")<br/>    host_tls_ca       = optional(string, "")<br/>  })</pre> | `{}` | no |
 | <a name="input_connection_passwords"></a> [connection\_passwords](#input\_connection\_passwords) | Passwords keyed by connection name. Kept apart from connections so the map can be iterated; prefer credential\_ref. | `map(string)` | `{}` | no |
 | <a name="input_connection_tls_keys"></a> [connection\_tls\_keys](#input\_connection\_tls\_keys) | Client TLS keys keyed by connection name. | `map(string)` | `{}` | no |
@@ -73,6 +78,8 @@ No modules.
 
 | Name | Description |
 | ---- | ----------- |
+| <a name="output_api_key_secrets"></a> [api\_key\_secrets](#output\_api\_key\_secrets) | API key secrets by name. Returned once, at creation; null for imported keys. |
+| <a name="output_api_keys"></a> [api\_keys](#output\_api\_keys) | Created API keys by name. |
 | <a name="output_connections"></a> [connections](#output\_connections) | Created connections by name. |
 | <a name="output_workspace_id"></a> [workspace\_id](#output\_workspace\_id) | Workspace ID. |
 | <a name="output_workspace_slug"></a> [workspace\_slug](#output\_workspace\_slug) | Workspace slug. |

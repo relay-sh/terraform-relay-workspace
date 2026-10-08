@@ -27,3 +27,13 @@ resource "relay_connection" "this" {
   tls_ca              = each.value.tls_ca
   host_tls_ca         = each.value.host_tls_ca != null ? each.value.host_tls_ca : var.connection_defaults.host_tls_ca
 }
+
+resource "relay_api_key" "this" {
+  for_each = var.api_keys
+
+  workspace_id  = relay_workspace.this.id
+  name          = each.key
+  role          = each.value.role
+  allowed_cidrs = each.value.allowed_cidrs
+  expires_in    = each.value.expires_in
+}

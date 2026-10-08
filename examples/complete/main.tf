@@ -41,8 +41,21 @@ module "workspace" {
   connection_passwords = {
     legacy = var.legacy_password
   }
+
+  api_keys = {
+    deployer = {
+      role          = "admin"
+      allowed_cidrs = ["203.0.113.0/24"]
+      expires_in    = "2160h"
+    }
+  }
 }
 
 output "connections" {
   value = module.workspace.connections
+}
+
+output "deployer_api_key" {
+  value     = module.workspace.api_key_secrets["deployer"]
+  sensitive = true
 }
