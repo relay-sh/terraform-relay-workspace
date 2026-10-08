@@ -17,6 +17,17 @@ mock_provider "relay" {
       status = "unknown"
     }
   }
+  mock_resource "relay_ip_access_list" {
+    defaults = {
+      id = "ip-1"
+    }
+  }
+  mock_resource "relay_private_endpoint_service" {
+    defaults = {
+      id                    = "pes-1"
+      endpoint_service_name = "com.amazonaws.vpce.us-east-1.vpce-svc-0123456789abcdef0"
+    }
+  }
 }
 
 variables {
@@ -51,6 +62,13 @@ variables {
     reader = {
       role = "viewer"
     }
+  }
+  ip_access_list = {
+    "203.0.113.0/24"  = "office"
+    "198.51.100.7/32" = ""
+  }
+  private_endpoint_services = {
+    use1 = { region = "us-east-1" }
   }
 }
 
@@ -128,5 +146,38 @@ run "api_keys" {
   assert {
     condition     = nonsensitive(output.api_key_secrets["deployer"]) == "rly_key_mock"
     error_message = "secrets are exposed through the sensitive output"
+  }
+}
+
+run "network" {
+  command = apply
+
+  assert {
+    condition     = relay_ip_access_list.this["203.0.113.0/24"].description == "office" && relay_ip_access_list.this["198.51.100.7/32"].workspace_id == "ws-123"
+    error_message = "one entry per CIDR, in the module's workspace"
+  }
+
+  assert {
+    condition     = relay_private_endpoint_service.this["use1"].cloud == "aws" && relay_private_endpoint_service.this["use1"].region == "us-east-1"
+    error_message = "cloud defaults to aws"
+  }
+
+  assert {
+    condition     = keys(output.ip_access_list) == ["198.51.100.7/32", "203.0.113.0/24"] && output.private_endpoint_services["use1"].endpoint_service_name == "com.amazonaws.vpce.us-east-1.vpce-svc-0123456789abcdef0"
+    error_message = "outputs expose every entry and each service's endpoint service name"
+  }
+}
+
+run "no_network" {
+  command = apply
+
+  variables {
+    ip_access_list            = {}
+    private_endpoint_services = {}
+  }
+
+  assert {
+    condition     = output.ip_access_list == {} && output.private_endpoint_services == {}
+    error_message = "network inputs are optional"
   }
 }

@@ -72,3 +72,18 @@ variable "api_keys" {
   }))
   default = {}
 }
+
+variable "ip_access_list" {
+  description = "Networks allowed to reach the workspace's public database endpoints, as canonical CIDR => description."
+  type        = map(string)
+  default     = {}
+}
+
+variable "private_endpoint_services" {
+  description = "Private endpoint services keyed by a label of your choice. Register cloud endpoints on them with relay_private_endpoint."
+  type = map(object({
+    cloud  = optional(string, "aws")
+    region = string
+  }))
+  default = {}
+}

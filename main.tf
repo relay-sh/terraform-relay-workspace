@@ -37,3 +37,19 @@ resource "relay_api_key" "this" {
   allowed_cidrs = each.value.allowed_cidrs
   expires_in    = each.value.expires_in
 }
+
+resource "relay_ip_access_list" "this" {
+  for_each = var.ip_access_list
+
+  workspace_id = relay_workspace.this.id
+  cidr         = each.key
+  description  = each.value
+}
+
+resource "relay_private_endpoint_service" "this" {
+  for_each = var.private_endpoint_services
+
+  workspace_id = relay_workspace.this.id
+  cloud        = each.value.cloud
+  region       = each.value.region
+}
