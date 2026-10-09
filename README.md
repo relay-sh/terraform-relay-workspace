@@ -34,6 +34,11 @@ Terraform cannot iterate a map that holds sensitive values. Prefer
 
 Upstream TLS is always on. Only its CA can be set.
 
+The agent pool and the secret source a connection names must already exist in
+the organization; the module does not create them. `examples/complete` uses
+`payments` and `vault-prod`, so applying it unchanged fails with `pool
+"payments" does not exist` until both are set up or renamed to ones you have.
+
 `api_keys` creates keys confined to the workspace, keyed by name. Their secrets
 come out of `api_key_secrets` once, at creation. A key with `expires_in` is
 replaced by the first apply after it expires, so its secret changes then and
@@ -43,7 +48,10 @@ whatever reads `api_key_secrets` has to pick up the new value.
 network. The module stops at the service: registering a cloud endpoint on it
 takes your own `aws_vpc_endpoint`, so `relay_private_endpoint` lives next to it
 in your configuration. The platform accepts the connection by itself; see
-`examples/complete`.
+`examples/complete`. To create the cloud side too, leave
+`private_endpoint_services` out and use
+[terraform-relay-private-endpoint](https://github.com/relay-sh/terraform-relay-private-endpoint),
+which creates the service, the VPC endpoint and its registration in one call.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
